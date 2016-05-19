@@ -12,9 +12,6 @@ namespace OCA\Eslog\Appinfo;
 
 $app = new Application();
 \OCA\Eslog\Lib\Hooks::connectHooks();
-//$app->getContainer()->query('Hooks')->register();
 $app->registerSettings();
 $app->registerEslogConfig();
-//`error_log(\OCP\User::getUser(),0);
-//error_log(\OC::$server->getUserSession()->getUser()->getUID(), 0);
 

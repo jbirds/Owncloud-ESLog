@@ -54,7 +54,7 @@ class Log {
 	{
 		$params = array();
 		$params['hosts'] = array(
-			\OCP\Config::getAppValue('eslog', 'eslog_host', '10.2.20.36:9200')
+			\OCP\Config::getAppValue('eslog', 'eslog_host', 'localhost:9200')
 		);
 		if (\OCP\Config::getAppValue('eslog', 'eslog_auth', 'none') != "none") {
 			$params['connectionParams']['auth'] = array(
@@ -65,7 +65,6 @@ class Log {
 		}
 
 		$client = \Elasticsearch\ClientBuilder::create()->setHosts(array('10.2.20.36:9200'))->build();
-		// $date = date('Y-m-d H:i:s');
 		$date = date('c');
 		$request=$_REQUEST;
 		if(isset($request['password'])) $request['password']='******';

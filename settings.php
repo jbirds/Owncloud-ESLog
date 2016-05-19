@@ -1,6 +1,6 @@
-<?php
+<php
 $tmpl = new OC_Template('eslog', 'settings');
-$tmpl->assign('eslog_host', \OCP\Config::getAppValue('eslog', 'eslog_host','10.2.20.36:9200'));
+$tmpl->assign('eslog_host', \OCP\Config::getAppValue('eslog', 'eslog_host','localhost:9200'));
 $tmpl->assign('eslog_auth', \OCP\Config::getAppValue('eslog', 'eslog_auth','none'));
 $tmpl->assign('eslog_user', \OCP\Config::getAppValue('eslog', 'eslog_user',''));
 $tmpl->assign('eslog_password', \OCP\Config::getAppValue('eslog', 'eslog_password',''));
