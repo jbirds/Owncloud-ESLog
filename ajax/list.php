@@ -7,7 +7,7 @@ if(basename($_SERVER['HTTP_REFERER'])!='admin'){
 	$params['user']=OC_User::getUser();
 }
 if(false === $list = OC_SuperLog::get($params)){
-	OCP\JSON::error(array('message'=>'Error retreiving superlog list'));
+	OCP\JSON::error(array('message'=>'Error retreiving ESLog list'));
 } 
 else{
 	OCP\JSON::success(array('data'=>$list));

@@ -4,39 +4,31 @@
 // See the Elasticsearch PHP API document for more details
 // http://www.elasticsearch.org/guide/en/elasticsearch/client/php-api/current/
 
+
+namespace OCA\Eslog\Lib;
+
 require_once 'apps/eslog/vendor/autoload.php';
+use OCP\IUserSession;
 
-class OC_esLog {
+class Log {
 
-	public function __construct(){		
+	/** IUserSession */
+	private $userSession;
 
+	/**
+	* @param User $ocuser
+	**/
+	public function __construct(
+		IUserSession $userSession
+	){		
+		$this->userSession = $userSession;
 	}
 
-	public static function log($path,$path2,$action,$protocol='http'){
-		if(isset($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_USER']))
-			$user = $_SERVER['PHP_AUTH_USER'];
-		else
-			$user = OCP\User::getUser();
+	public static function log($path,$path2,$action){
 
-		// Replace user with the right value
-		if ($action == 'User login attempt' || $action == 'User login') {
-			$user = $path;
-			$path = '';
-		}
-
-		if ($action == 'File shared' || $action == 'File unshared') {
-			$vars=$path;
-			$file=basename($vars['fileTarget']);
-			$folder=dirname($vars['fileTarget']);
-			$user=$vars['uidOwner'];
-			if (!empty($vars['shareWith'])) {
-				$folder2=$vars['shareWith'];
-			}
-			else {
-				$folder2=\OCP\Util::linkToPublic('files') .'&t=' . $vars['token'];
-			}
-			$path=$vars['fileTarget'];
-			$path2='';
+		$protocol = 'http';
+		if(!empty($_SERVER['PHP_AUTH_USER'])) {
+			$user = $this->userSession->getUser()->getUID();
 		}
 
 		$folder = is_array($path)?dirname($path['path']):dirname($path);
@@ -48,23 +40,8 @@ class OC_esLog {
 		$type='unknown';
 		
 		if(!empty($file2)){
-			if($protocol=='http'){
-				$type = \OC\Files\Filesystem::filetype($folder2.'/'.$file2); 
-			}
-			elseif($protocol=='caldav'){
-				$type = $_SERVER['CONTENT_TYPE']; 
-			}
-			elseif($protocol=='carddav'){
-				$type = $_SERVER['CONTENT_TYPE']; 
-			}
-			else{
-				$CONFIG_DATADIRECTORY = OC_Config::getValue( "datadirectory", OC::$SERVERROOT."/data" );
-				if(is_dir($CONFIG_DATADIRECTORY.'/'.$user.'/files')){
-					$type='unknown';
-					if(is_file($CONFIG_DATADIRECTORY.'/'.$user.'/files'.$folder.$file)) $type='file';
-					elseif(is_dir($CONFIG_DATADIRECTORY.'/'.$user.'/files'.$folder.$file)) $type='dir';
-				}
-			}
+			$type = \OC\Files\Filesystem::filetype($folder2.'/'.$file2); 
+		
 			if(strpos($type,';')){
 				$type=substr($type,0,strpos($type,';'));
 			}
@@ -77,18 +54,17 @@ class OC_esLog {
 	{
 		$params = array();
 		$params['hosts'] = array(
-			OC_Appconfig::getValue('eslog', 'eslog_host', '127.0.0.1:9200')
+			\OCP\Config::getAppValue('eslog', 'eslog_host', '10.2.20.36:9200')
 		);
-		if (OC_Appconfig::getValue('eslog', 'eslog_auth', 'none') != "none") {
+		if (\OCP\Config::getAppValue('eslog', 'eslog_auth', 'none') != "none") {
 			$params['connectionParams']['auth'] = array(
-				OC_Appconfig::getValue('eslog', 'eslog_user', ''),
-				OC_Appconfig::getValue('eslog', 'eslog_password', ''),
-				OC_Appconfig::getValue('eslog', 'eslog_auth', 'none')
+				\OCP\Config::getAppValue('eslog', 'eslog_user', ''),
+				\OCP\Config::getAppValue('eslog', 'eslog_password', ''),
+				\OCP\Config::getAppValue('eslog', 'eslog_auth', 'none')
 			);
 		}
 
-		$client = new Elasticsearch\Client($params);
-
+		$client = \Elasticsearch\ClientBuilder::create()->setHosts(array('10.2.20.36:9200'))->build();
 		// $date = date('Y-m-d H:i:s');
 		$date = date('c');
 		$request=$_REQUEST;
@@ -111,8 +87,8 @@ class OC_esLog {
 			'server'=>$server
 		));
 		$params = array();
-		$params['index'] = OC_Appconfig::getValue('eslog', 'eslog_index', 'owncloud');
-		$params['type'] = OC_Appconfig::getValue('eslog', 'eslog_type', 'owncloud');
+		$params['index'] = \OCP\Config::getAppValue('eslog', 'eslog_index', 'owncloud');
+		$params['type'] = \OCP\Config::getAppValue('eslog', 'eslog_type', 'owncloud');
 		$params['body'] = array(
 			'@timestamp' => $date,
 			'user' => $user,

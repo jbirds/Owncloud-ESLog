@@ -1,4 +1,4 @@
-function esLog(){
+function SuperLog(){
 	
 }
 SuperLog.prototype={

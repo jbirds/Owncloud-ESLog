@@ -3,8 +3,9 @@
     <id>eslog</id>
     <name>Eslog</name>
     <description>Eslog</description>
-    <version>1.1</version>
+    <version>1.2</version>
+    <namespace>Eslog</namespace>
     <licence>AGPL</licence>
-    <author>Patrick Paysant / CNRS</author>
-    <require>8</require>
+    <author>Patrick Paysant / CNRS / Jason Wu</author>
+    <require>9</require>
 </info>

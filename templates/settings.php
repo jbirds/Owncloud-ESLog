@@ -1,9 +1,14 @@
-<?php if(basename($_SERVER['REQUEST_URI'])=='admin'): ?>
+<?php if(basename($_SERVER['REQUEST_URI'])=='admin'): 
+
+script('eslog', 'eslog');
+style('eslog', 'eslog');
+
+?>
 <form id="eslogsettings" method="post" action="#" class="section">
 	<h2>Elasticsearch Log</h2>
 	<p>
 	Send OwnCloud events to an <a href="http://www.elasticsearch.org/">Elasticsearch</a> server.</br>
-    
+    </p>
 	<p>
 		<input type="text" id="eslog_host" name="eslog_host" value="<?php echo $_['eslog_host']; ?>" size="50"/>
 		<label for="eslog_host">ElasticSearch server (Use the following format: [fqdn|ip]:port)</label>
@@ -36,5 +41,5 @@
 	</p>
         <input type="submit" value="Save"/> 
 	</p>
-</form> 
-<?php endif; ?>
+</form>
+<?php endif; ?> 
